@@ -16,6 +16,7 @@ class Modelo():
         
         O dataset é carregado com as seguintes colunas: SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm e Species.
         """
+        path = "iris.data"
         names = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm', 'Species']
         self.df = pd.read_csv(path, names=names)
 
@@ -32,6 +33,13 @@ class Modelo():
             * Explore gráficos e visualizações para obter insights sobre a distribuição dos dados.
             * Certifique-se de que os dados estão limpos e prontos para serem usados no treinamento do modelo.
         """
+
+         # Verificar e tratar valores faltantes
+        if self.df.isnull().sum().any():
+            self.df.dropna(inplace=True)
+        
+        # Converter rótulos de espécies em valores numéricos
+        self.df['Species'] = self.df['Species'].astype('category').cat.codes
         pass
 
     def Treinamento(self):
@@ -46,6 +54,28 @@ class Modelo():
         Nota: Esta função deve ser ajustada conforme o modelo escolhido.
         """
         pass
+        
+    def Treinamento(self):
+        from sklearn.model_selection import train_test_split
+        from sklearn.svm import SVC
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.metrics import accuracy_score
+    
+        X = self.df.iloc[:, :-1]
+        y = self.df['Species']
+    
+        # Dividir dados
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
+        # Treinar SVM
+        svm_model = SVC()
+        svm_model.fit(X_train, y_train)
+        self.svm_accuracy = accuracy_score(y_test, svm_model.predict(X_test))
+    
+        # Treinar Regressão Logística
+        lr_model = LogisticRegression(max_iter=200)
+        lr_model.fit(X_train, y_train)
+        self.lr_accuracy = accuracy_score(y_test, lr_model.predict(X_test))
 
     def Teste(self):
         """
@@ -54,6 +84,9 @@ class Modelo():
         Esta função deve ser implementada para testar o modelo e calcular métricas de avaliação relevantes, 
         como acurácia, precisão, ou outras métricas apropriadas ao tipo de problema.
         """
+        def Teste(self):
+            print(f"Acurácia do SVM: {self.svm_accuracy:.2f}")
+            print(f"Acurácia da Regressão Logística: {self.lr_accuracy:.2f}")
         pass
 
     def Train(self):
